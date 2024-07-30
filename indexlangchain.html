@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain Query Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result h2 {
+            color: #4CAF50;
+        }
+        .result p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LangChain Query Interface</h1>
+        <form id="queryForm" method="post" action="/get_answer">
+            <label for="url">Enter URL:</label>
+            <input type="text" id="url" name="url" placeholder="Enter URL here" required>
+            
+            <label for="text">Enter Your Query:</label>
+            <input type="text" id="text" name="text" placeholder="Enter your query here" required>
+            
+            <input type="submit" value="Submit">
+        </form>
+        
+        <div class="result">
+            <h2>Answer:</h2>
+            <p id="answerText"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('queryForm').onsubmit = function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch('/get_answer', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('answerText').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('answerText').innerText = data.answer;
+                }
+            })
+            .catch(error => {
+                document.getElementById('answerText').innerText = 'Error: ' + error.message;
+            });
+        };
+    </script>
+</body>
+</html>
